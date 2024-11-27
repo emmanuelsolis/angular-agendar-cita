@@ -1,15 +1,16 @@
-import { Injectable } from "@angular/core";
-
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class UsersService {
-    private readonly _http = 'https://jsonplaceholder.typicode.com/users';
+    private readonly _http = inject(HttpClient);
     constructor() { }
 
-    getUsers() {
-        return fetch(this._http).then(res => res.json());
+    getUsers(): Observable<any> {
+        return this._http.get('https://jsonplaceholder.typicode.com/users');
     }
 }
