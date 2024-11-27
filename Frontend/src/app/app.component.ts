@@ -13,5 +13,10 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 export class AppComponent {
   title = 'agenda-citas-app';
   private  readonly usersService = inject(UsersService);
-  users$ = this.usersService.getUsers();
+  /*users$ = this.usersService.getUsers();*/
+  users$ = this.usersService.getAllUsers();
+
+  async ngOnInit() {
+    this.users$ = await this.usersService.getAllUsers();
+  }
 }
