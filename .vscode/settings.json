@@ -1,0 +1,18 @@
+{
+    "workbench.colorCustomizations": {
+        "statusBarItem.remoteForeground": "#B4FF91",
+        "statusBarItem.remoteBackground": "#307F0C",
+        "statusBar.foreground": "#ECE784",
+        "statusBar.background": "#6A6401",
+        "statusBarItem.hoverBackground": "#3B530C",
+        "activityBar.foreground": "#FFA5D3",
+        "activityBar.background": "#290015",
+        "activityBar.inactiveForeground": "#851876",
+        "activityBarBadge.foreground": "#000000",
+        "activityBarBadge.background": "#F88862",
+        "statusBar.debuggingForeground": "#000000",
+        "statusBar.debuggingBackground": "#A09B37"
+    },
+    "aider-composer.inlineDiff.enable": true,
+    "peacock.color": "#000000"
+}
