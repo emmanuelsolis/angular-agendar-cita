@@ -1,0 +1,71 @@
+<div class="register-container">
+  <div class="register-header">
+    <h2>Crear Cuenta</h2>
+    <button mat-icon-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput formControlName="name" placeholder="Juan Pérez">
+      <mat-error *ngIf="registerForm.get('name')?.errors?.['required']">
+        El nombre es requerido
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('name')?.errors?.['minlength']">
+        El nombre debe tener al menos 3 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="ejemplo@correo.com">
+      <mat-error *ngIf="registerForm.get('email')?.errors?.['required']">
+        El correo electrónico es requerido
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('email')?.errors?.['email']">
+        Ingrese un correo electrónico válido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Contraseña</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('password')?.errors?.['required']">
+        La contraseña es requerida
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('password')?.errors?.['minlength']">
+        La contraseña debe tener al menos 6 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Confirmar contraseña</mat-label>
+      <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+      <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+        <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
+        Confirme su contraseña
+      </mat-error>
+      <mat-error *ngIf="registerForm.hasError('mismatch')">
+        Las contraseñas no coinciden
+      </mat-error>
+    </mat-form-field>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid || loading">
+        <mat-icon *ngIf="loading" class="spinner">sync</mat-icon>
+        <span>Crear Cuenta</span>
+      </button>
+    </div>
+  </form>
+</div>
