@@ -1,0 +1,240 @@
+/* Variables */
+:root {
+  --primary-color: #4a90e2;
+  --success-color: #4CAF50;
+  --text-color: #2c3e50;
+  --light-gray: #f8f9fa;
+  --border-color: #e0e0e0;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+/* Layout base */
+.dashboard-wrapper {
+  min-height: 100vh;
+  background-color: var(--light-gray);
+}
+
+/* Navbar */
+.navbar {
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* Main container */
+.main-container {
+  max-width: 1400px;
+  padding: 0 1rem;
+}
+
+/* Action button */
+.action-button-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.btn-schedule {
+  background-color: var(--success-color);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-lg);
+  font-size: 1.1rem;
+  border: none;
+  box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-schedule:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-schedule i {
+  margin-right: 0.5rem;
+}
+
+/* Specialties section */
+.specialties-section {
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.specialties-container {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.specialty-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1.5rem;
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+  transition: all 0.2s;
+  color: var(--text-color);
+}
+
+.specialty-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Main grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Professionals panel */
+.professionals-panel {
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  height: fit-content;
+  box-shadow: var(--shadow-sm);
+}
+
+.professionals-panel h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.professionals-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.professional-card {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.professional-card:hover {
+  background-color: var(--light-gray);
+}
+
+.professional-info h4 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.professional-info .specialty {
+  color: #666;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+/* Calendar panel */
+.calendar-panel {
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Responsive design */
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-panel {
+    order: -1;
+  }
+
+  .professionals-list {
+    max-height: none;
+  }
+
+  .btn-schedule {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .specialties-container {
+    padding: 0.5rem 0;
+  }
+
+  .professional-card {
+    padding: 1rem 0;
+  }
+}
+
+/* Utility classes */
+.btn {
+  border-radius: var(--radius-lg);
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Modal customization */
+:host ::ng-deep .modal {
+  background-color: rgba(0,0,0,0.5);
+}
+
+:host ::ng-deep .modal-content {
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-md);
+}

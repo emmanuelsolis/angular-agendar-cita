@@ -1,0 +1,62 @@
+<form (ngSubmit)="onSubmit()" #appointmentForm="ngForm" class="appointment-form">
+  <!-- Professional Info -->
+  <div class="professional-info mb-4" *ngIf="professional">
+    <h6 class="text-muted mb-3">Profesional Seleccionado</h6>
+    <div class="card bg-light">
+      <div class="card-body">
+        <h5 class="card-title">{{professional.nombre}}</h5>
+        <p class="card-text">
+          <small>
+            <strong>Especialidad:</strong> {{professional.especialidad}}<br>
+            <strong>Email:</strong> {{professional.email}}
+          </small>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date and Time Selection -->
+  <div class="form-group mb-3">
+    <label for="appointmentDate" class="form-label">Fecha y Hora</label>
+    <input
+      type="datetime-local"
+      class="form-control"
+      id="appointmentDate"
+      name="appointmentDate"
+      [(ngModel)]="appointment.date"
+      required>
+  </div>
+
+  <!-- Reason for Appointment -->
+  <div class="form-group mb-3">
+    <label for="reason" class="form-label">Motivo de la Consulta</label>
+    <textarea
+      class="form-control"
+      id="reason"
+      name="reason"
+      rows="3"
+      [(ngModel)]="appointment.reason"
+      required
+      placeholder="Describa brevemente el motivo de su consulta"></textarea>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- Submit Button -->
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Agendando...' : 'Agendar Cita' }}
+    </button>
+  </div>
+</form>

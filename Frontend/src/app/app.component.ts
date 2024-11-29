@@ -17,6 +17,7 @@ export class AppComponent {
   users$ = this.usersService.getAllUsers();
 
   async ngOnInit() {
+    
     this.users$ = await this.usersService.getAllUsers();
   }
 }
