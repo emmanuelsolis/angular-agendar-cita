@@ -1,0 +1,47 @@
+.add-professional-form-container {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-dialog-content {
+  margin: 20px 0;
+  padding: 0;
+}
+
+mat-dialog-actions {
+  padding: 16px 0;
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .add-professional-form-container {
+    padding: 16px;
+  }
+
+  .form-fields {
+    gap: 12px;
+  }
+
+  mat-dialog-content {
+    margin: 16px 0;
+  }
+}
