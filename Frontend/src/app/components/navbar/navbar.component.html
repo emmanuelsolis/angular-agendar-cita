@@ -1,0 +1,35 @@
+<nav class="navbar flex justify-evenly">
+  <div class="navbar-brand flex justify-start">
+    <a routerLink="/" class="logo">Agenda Citas</a>
+  </div>
+  <div class="navbar-buttons">
+    <ng-container *ngIf="!isLoggedIn">
+      <button (click)="openRegisterModal()" class="btn btn-outline">Registrarse</button>
+      <button (click)="openLoginModal()" class="btn btn-primary">Iniciar Sesión</button>
+    </ng-container>
+    <ng-container *ngIf="isLoggedIn">
+      <span class="user-name">{{ currentUser?.name || 'Usuario' }}</span>
+      <button (click)="logout()" class="btn btn-danger">Cerrar Sesión</button>
+    </ng-container>
+  </div>
+</nav>
+
+<!-- Modal de Login -->
+<div class="modal-overlay" *ngIf="showLoginModal" (click)="closeModals()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-login-form
+      (close)="closeModals()"
+      (loginSuccess)="onLoginSuccess($event)">
+    </app-login-form>
+  </div>
+</div>
+
+<!-- Modal de Registro -->
+<div class="modal-overlay" *ngIf="showRegisterModal" (click)="closeModals()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-register-form
+      (close)="closeModals()"
+      (registerSuccess)="onRegisterSuccess($event)">
+    </app-register-form>
+  </div>
+</div>

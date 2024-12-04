@@ -2,12 +2,8 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand" href="#">MediCitas</a>
       <div class="nav-buttons">
-        <ng-container *ngIf="!isLoggedIn">
-          <button class="btn btn-outline-primary me-2" (click)="openLoginModal()">Iniciar Sesión</button>
-          <button class="btn btn-primary" (click)="openRegisterModal()">Registrarse</button>
-        </ng-container>
+        
         <div class="user-menu" *ngIf="isLoggedIn">
           <span class="user-name">{{ currentUser?.name || 'Usuario' }}</span>
           <button class="btn btn-link" (click)="logout()">Cerrar Sesión</button>

@@ -231,10 +231,17 @@
 /* Modal customization */
 :host ::ng-deep .modal {
   background-color: rgba(0,0,0,0.5);
+  width: 100%;
 }
 
 :host ::ng-deep .modal-content {
   border-radius: var(--radius-md);
   border: none;
   box-shadow: var(--shadow-md);
+}
+
+/*Modales de login */
+.login-container *{
+  max-width: 100%;
+  margin: 0 auto;
 }

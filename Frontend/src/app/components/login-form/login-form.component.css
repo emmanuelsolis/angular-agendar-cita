@@ -45,7 +45,7 @@ mat-form-field {
 }
 
 .form-actions button {
-  min-width: 120px;
+  min-width: 180px;
 }
 
 @keyframes spin {

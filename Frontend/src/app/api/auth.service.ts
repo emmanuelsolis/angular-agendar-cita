@@ -20,6 +20,8 @@ interface AuthResponse {
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   private apiUrl = 'http://localhost:3000/api/auth';
   private isBrowser: boolean;
 
@@ -32,6 +34,7 @@ export class AuthService {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         this.currentUserSubject.next(JSON.parse(storedUser));
+        this.isAuthenticatedSubject.next(true);
       }
     }
   }
@@ -63,6 +66,7 @@ export class AuthService {
             this.setStorage('currentUser', JSON.stringify(response.user));
             this.setStorage('token', response.token);
             this.currentUserSubject.next(response.user);
+            this.isAuthenticatedSubject.next(true);
           }
         })
       );
@@ -76,15 +80,25 @@ export class AuthService {
             this.setStorage('currentUser', JSON.stringify(response.user));
             this.setStorage('token', response.token);
             this.currentUserSubject.next(response.user);
+            this.isAuthenticatedSubject.next(true);
           }
         })
       );
   }
 
-  logout(): void {
-    this.removeStorage('currentUser');
-    this.removeStorage('token');
-    this.currentUserSubject.next(null);
+  logout(): Observable<void> {
+    return new Observable(observer => {
+      if (this.isBrowser) {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('token');
+        this.currentUserSubject.next(null);
+        this.isAuthenticatedSubject.next(false);
+        observer.next();
+        observer.complete();
+      } else {
+        observer.error('Not running in browser');
+      }
+    });
   }
 
   getCurrentUser(): User | null {
@@ -97,5 +111,11 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getCurrentUser();
+  }
+
+  checkAuthStatus(): void {
+    const token = this.getStorage('token');
+    const user = this.getStorage('currentUser');
+    this.isAuthenticatedSubject.next(!!(token && user));
   }
 }
