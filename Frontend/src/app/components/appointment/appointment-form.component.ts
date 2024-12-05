@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentService } from '../../api/appointment.service';
@@ -141,6 +141,7 @@ import { Router } from '@angular/router';
   `]
 })
 export class AppointmentFormComponent implements OnInit {
+  @Input() appointmentId: string | null = null;
   appointmentForm: FormGroup;
   professionals: any[] = [];
   availableStartTimes: string[] = [];
@@ -162,6 +163,9 @@ export class AppointmentFormComponent implements OnInit {
   ngOnInit() {
     this.loadProfessionals();
     this.generateAvailableTimes();
+    if (this.appointmentId) {
+      this.loadAppointmentData();
+    }
   }
 
   private createForm(): FormGroup {
@@ -250,5 +254,13 @@ export class AppointmentFormComponent implements OnInit {
 
   onCancel() {
     this.router.navigate(['/appointments']);
+  }
+
+  private loadAppointmentData() {
+    this.appointmentService.getAppointmentById(this.appointmentId!)
+      .subscribe(appointment => {
+        this.appointmentForm.patchValue(appointment);
+        this.editMode = true;
+      });
   }
 }

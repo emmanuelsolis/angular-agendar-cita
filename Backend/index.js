@@ -9,8 +9,6 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-
-
 /*Conexion a la base de datos  MongoDB*/
 
 mongoose
@@ -24,9 +22,17 @@ mongoose
     .catch((err) => {
         console.log(err);
     });
-    app.listen(4000, () => {
-        console.log('Server on port', 4000);
-    });
-    // Definicion de rutas
-    const appointmentRoutes = require('./routes/appointments');
-    app.use('/api/appointments', appointmentRoutes);
+
+app.listen(4000, () => {
+    console.log('Server on port', 4000);
+});
+
+// Definicion de rutas
+const appointmentRoutes = require('./routes/appointments');
+app.use('/api/appointments', appointmentRoutes);
+
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
+const professionalRoutes = require('./routes/professionalRoutes');
+app.use('/api/professionals', professionalRoutes);
