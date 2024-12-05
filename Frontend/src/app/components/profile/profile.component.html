@@ -12,6 +12,30 @@
     </div>
   </div>
 
+  <!-- Formulario de edición de perfil -->
+  <div class="edit-profile-section">
+    <div class="card">
+      <div class="card-body">
+        <h3>Editar Perfil</h3>
+        <form #profileForm="ngForm">
+          <div class="form-group mb-3">
+            <label for="name">Nombre:</label>
+            <input type="text" class="form-control" id="name" [(ngModel)]="currentUser.name" name="name" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="currentUser.email" name="email" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="phone">Teléfono:</label>
+            <input type="text" class="form-control" id="phone" [(ngModel)]="currentUser.phone" name="phone">
+          </div>
+          <button type="button" class="btn btn-primary" (click)="saveProfile()">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Sección de citas -->
   <div class="appointments-section">
     <div class="d-flex justify-content-between align-items-center mb-3">

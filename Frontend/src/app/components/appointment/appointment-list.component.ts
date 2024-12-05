@@ -51,8 +51,38 @@ import { Appointment } from '../../models/appointment.model';
                     class="btn-delete">
               Eliminar
             </button>
+            <button (click)="editAppointment(appointment)"
+                    class="btn-edit">
+              Editar
+            </button>
           </div>
         </div>
+      </div>
+
+      <div *ngIf="editingAppointment" class="edit-form">
+        <h3>Editar Cita</h3>
+        <form (ngSubmit)="saveAppointment()">
+          <div class="form-group">
+            <label for="editDate">Fecha:</label>
+            <input type="date" id="editDate" [(ngModel)]="editingAppointment.date" name="editDate" required>
+          </div>
+          <div class="form-group">
+            <label for="editStartTime">Hora de inicio:</label>
+            <input type="time" id="editStartTime" [(ngModel)]="editingAppointment.startTime" name="editStartTime" required>
+          </div>
+          <div class="form-group">
+            <label for="editEndTime">Hora de fin:</label>
+            <input type="time" id="editEndTime" [(ngModel)]="editingAppointment.endTime" name="editEndTime" required>
+          </div>
+          <div class="form-group">
+            <label for="editNotes">Notas:</label>
+            <textarea id="editNotes" [(ngModel)]="editingAppointment.notes" name="editNotes"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Guardar</button>
+            <button type="button" class="btn-cancel" (click)="cancelEditing()">Cancelar</button>
+          </div>
+        </form>
       </div>
     </div>
   `,
@@ -131,6 +161,11 @@ import { Appointment } from '../../models/appointment.model';
       color: white;
     }
 
+    .btn-edit {
+      background-color: #2196F3;
+      color: white;
+    }
+
     .pending {
       border-left: 4px solid #ff9800;
     }
@@ -143,6 +178,47 @@ import { Appointment } from '../../models/appointment.model';
       border-left: 4px solid #f44336;
       opacity: 0.7;
     }
+
+    .edit-form {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-save {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-cancel {
+      background-color: #f44336;
+      color: white;
+    }
   `]
 })
 export class AppointmentListComponent implements OnInit {
@@ -150,6 +226,7 @@ export class AppointmentListComponent implements OnInit {
   filteredAppointments: Appointment[] = [];
   statusFilter: string = 'all';
   currentUserId: string = '';
+  editingAppointment: Appointment | null = null;
 
   constructor(
     private appointmentService: AppointmentService,
@@ -191,6 +268,26 @@ export class AppointmentListComponent implements OnInit {
         .subscribe(response => {
           if (response.success) {
             this.loadAppointments();
+          }
+        });
+    }
+  }
+
+  editAppointment(appointment: Appointment) {
+    this.editingAppointment = { ...appointment };
+  }
+
+  cancelEditing() {
+    this.editingAppointment = null;
+  }
+
+  saveAppointment() {
+    if (this.editingAppointment && this.editingAppointment.id) {
+      this.appointmentService.updateAppointment(this.editingAppointment.id, this.editingAppointment)
+        .subscribe(response => {
+          if (response.success) {
+            this.loadAppointments();
+            this.editingAppointment = null;
           }
         });
     }

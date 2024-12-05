@@ -121,4 +121,12 @@ export class ProfileComponent implements OnInit {
       notes: ''
     };
   }
+
+  editProfile() {
+    // Logic to enable profile editing
+  }
+
+  saveProfile() {
+    // Logic to save updated profile data
+  }
 }
