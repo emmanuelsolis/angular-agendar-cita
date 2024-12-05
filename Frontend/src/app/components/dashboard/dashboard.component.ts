@@ -2,15 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProfessionalService } from '../../api/professional.service';
-import { AuthService } from '../../api/auth.service';
-import { AppointmentService, Appointment } from '../../services/appointment.service';
+import { AppointmentService } from '../../api/appointment.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
-import { LoginFormComponent } from '../login-form/login-form.component';
-import { RegisterFormComponent } from '../register-form/register-form.component';
+import { AuthService, User } from '../../api/auth.service';
+import { firstValueFrom } from 'rxjs';
+
+interface Professional {
+  id: string;
+  nombre: string;
+  especialidad: string;
+  email: string;
+  telefono: string;
+  descripcion: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -18,16 +25,13 @@ import { RegisterFormComponent } from '../register-form/register-form.component'
   imports: [
     CommonModule,
     RouterModule,
-    FullCalendarModule,
-    AppointmentFormComponent,
-    LoginFormComponent,
-    RegisterFormComponent
+    FullCalendarModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  professionals: any[] = [];
+  professionals: Professional[] = [];
   specialities: Set<string> = new Set();
   selectedSpeciality: string | null = null;
   calendarOptions: CalendarOptions = {
@@ -36,42 +40,41 @@ export class DashboardComponent implements OnInit {
     weekends: true,
     events: [],
     eventClick: this.handleEventClick.bind(this),
-    dateClick: this.handleDateClick.bind(this)
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,dayGridWeek'
+    }
   };
-
-  // Modal control
-  showAppointmentModal = false;
-  showLoginModal = false;
-  showRegisterModal = false;
-  selectedProfessional: any = null;
-  selectedDate: Date | null = null;
 
   // Auth state
   isLoggedIn = false;
-  currentUser: any = null;
+  currentUser: User | null = null;
 
   constructor(
     private professionalService: ProfessionalService,
-    private authService: AuthService,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private authService: AuthService
   ) {}
 
   async ngOnInit() {
-    this.professionals = await this.professionalService.getProfessionals();
+    await this.loadProfessionals();
     this.extractSpecialities();
-    this.checkAuthStatus();
-    this.loadAppointments();
+    await this.checkAuthStatus();
   }
 
-  checkAuthStatus() {
-    this.isLoggedIn = this.authService.isLoggedIn();
-    if (this.isLoggedIn) {
-      this.currentUser = this.authService.getCurrentUser();
-      this.loadAppointments();
+  private async loadProfessionals() {
+    try {
+      const professionals = await firstValueFrom(this.professionalService.getProfessionals());
+      if (professionals) {
+        this.professionals = professionals;
+      }
+    } catch (error) {
+      console.error('Error loading professionals:', error);
     }
   }
 
-  extractSpecialities() {
+  private extractSpecialities() {
     this.professionals.forEach(professional => {
       if (professional.especialidad) {
         this.specialities.add(professional.especialidad);
@@ -93,84 +96,11 @@ export class DashboardComponent implements OnInit {
   // Calendar event handlers
   handleEventClick(clickInfo: EventClickArg) {
     const appointment = clickInfo.event.extendedProps;
-    // You can show appointment details in a modal here
     console.log('Appointment clicked:', appointment);
   }
 
-  handleDateClick(arg: any) {
-    if (!this.isLoggedIn) {
-      this.openLoginModal();
-      return;
-    }
-    this.selectedDate = arg.date;
-    if (this.selectedProfessional) {
-      this.showAppointmentModal = true;
-    }
-  }
-
-  // Modal methods
-  openAppointmentModal(professional: any) {
-    if (!this.isLoggedIn) {
-      this.openLoginModal();
-      return;
-    }
-    this.selectedProfessional = professional;
-    this.showAppointmentModal = true;
-  }
-
-  closeAppointmentModal() {
-    this.showAppointmentModal = false;
-    this.selectedProfessional = null;
-    this.selectedDate = null;
-  }
-
-  openLoginModal() {
-    this.showLoginModal = true;
-  }
-
-  closeLoginModal() {
-    this.showLoginModal = false;
-  }
-
-  openRegisterModal() {
-    this.showRegisterModal = true;
-  }
-
-  closeRegisterModal() {
-    this.showRegisterModal = false;
-  }
-
-  // Event handlers
-  onAppointmentCreated(appointment: Appointment) {
-    this.closeAppointmentModal();
-    this.loadAppointments();
-  }
-
-  onLoginSuccess(userData: any) {
-    this.closeLoginModal();
-    this.checkAuthStatus();
-  }
-
-  onRegisterSuccess(userData: any) {
-    this.closeRegisterModal();
-    this.checkAuthStatus();
-  }
-
-  logout() {
-    this.authService.logout();
-    this.checkAuthStatus();
-  }
-
-  private loadAppointments() {
-    if (!this.isLoggedIn || !this.currentUser) return;
-
-    this.appointmentService.getUserAppointments(this.currentUser.id).subscribe(
-      appointments => {
-        this.calendarOptions.events = this.appointmentService.getCalendarEvents(appointments);
-      },
-      error => {
-        console.error('Error loading appointments:', error);
-      }
-    );
+  async checkAuthStatus() {
+    this.currentUser = await this.authService.getCurrentUser();
+    this.isLoggedIn = !!this.currentUser;
   }
 }

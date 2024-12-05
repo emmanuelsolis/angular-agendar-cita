@@ -1,48 +1,37 @@
-import { Injectable } from "@angular/core";
-import { JsonplaceholderService } from "./jsonplaceholder.service";
-import axios from "axios";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, lastValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface Professional {
+  id: string;
+  name: string;
+  specialty: string;
+  email?: string;
+  phone?: string;
+}
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root'
 })
+export class ProfessionalService {
+  private apiUrl = 'http://localhost:3000/professionals';
 
-export class ProfessionalService {	
-    private apiUrl = 'http://localhost:3000/api/professionals'
-    constructor(private jsonPlaceholderService: JsonplaceholderService) { }
+  constructor(private http: HttpClient) {}
 
-    async getProfessionals() {
-        const response = await axios.get(`${this.apiUrl}/`);
-        return response.data;
+  async getProfessionals(): Promise<Professional[]> {
+    try {
+      console.log('Fetching professionals from:', this.apiUrl);
+      const response = await lastValueFrom(this.http.get<Professional[]>(this.apiUrl));
+      console.log('Professionals received:', response);
+      return response;
+    } catch (error) {
+      console.error('Error fetching professionals:', error);
+      throw error;
     }
+  }
 
-    async loadAndSaveProfessionals(){
-        const specialities = [
-            'Cardiología',
-            'Dermatología',
-            'Neurología',
-            'Pediatría',
-            'Psiquiatría',
-            'Odontología',
-            'Ginecología',
-            'Traumatología',
-            'Oftalmología',
-            'Nutrición',
-        ];
-        const users = await this.jsonPlaceholderService.getAllUsers();
-        const professionals = users.map((user: any) => {
-            const randomSpeciality = 
-            specialities[Math.floor(Math.random() * specialities.length)];
-            return {
-                id: user.id,
-                nombre: user.name,
-                email: user.email,
-                telefono: user.phone,
-                speciality: randomSpeciality,
-            };
-        });
-      
-        //Enviar profesionales al backend
-        const response = await axios.post(`${this.apiUrl}/bulk`, professionals);
-        return response.data;
-    }
+  getProfessionalById(id: string): Observable<Professional> {
+    return this.http.get<Professional>(`${this.apiUrl}/${id}`);
+  }
 }

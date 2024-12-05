@@ -1,81 +1,36 @@
 <div class="dashboard-wrapper">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container">
-      <div class="nav-buttons">
-        
-        <div class="user-menu" *ngIf="isLoggedIn">
-          <span class="user-name">{{ currentUser?.name || 'Usuario' }}</span>
-          <button class="btn btn-link" (click)="logout()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
   <div class="container main-container">
-    <!-- Botón de acción principal -->
-    <div class="action-button-container">
-      <button class="btn btn-schedule" (click)="openAppointmentModal(null)">
-        <i class="fas fa-plus-circle"></i>
-        Agendar Nueva Cita
-      </button>
-    </div>
-
     <!-- Barra de especialidades -->
     <div class="specialties-section">
       <div class="specialties-container">
-        <button 
-          *ngFor="let speciality of specialities" 
-          class="specialty-btn"
-          [class.active]="selectedSpeciality === speciality"
-          (click)="selectSpeciality(speciality)">
-          {{ speciality }}
+        <button
+          *ngFor="let specialty of specialities"
+          class="specialty-button"
+          [class.active]="specialty === selectedSpeciality"
+          (click)="selectSpeciality(specialty)">
+          {{ specialty }}
         </button>
       </div>
     </div>
 
-    <!-- Grid principal -->
-    <div class="main-grid">
-      <!-- Lista de especialistas -->
-      <div class="professionals-panel">
-        <h3>Especialistas</h3>
-        <div class="professionals-list">
-          <div class="professional-card" *ngFor="let professional of filteredProfessionals">
-            <div class="professional-info">
-              <h4>{{ professional.nombre }}</h4>
-              <p class="specialty">{{ professional.especialidad }}</p>
-              <button class="btn btn-outline-primary btn-sm" (click)="openAppointmentModal(professional)">
-                Agendar Cita
-              </button>
-            </div>
+    <!-- Lista de profesionales -->
+    <div class="professionals-grid">
+      <div class="professional-card" *ngFor="let professional of filteredProfessionals">
+        <div class="professional-info">
+          <h3>{{ professional.nombre }}</h3>
+          <p class="specialty">{{ professional.especialidad }}</p>
+          <p class="description">{{ professional.descripcion }}</p>
+          <div class="contact-info">
+            <p><i class="fas fa-envelope"></i> {{ professional.email }}</p>
+            <p><i class="fas fa-phone"></i> {{ professional.telefono }}</p>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Calendario -->
-      <div class="calendar-panel">
-        <full-calendar [options]="calendarOptions"></full-calendar>
-      </div>
+    <!-- Calendario -->
+    <div class="calendar-section">
+      <full-calendar [options]="calendarOptions"></full-calendar>
     </div>
   </div>
 </div>
-
-<!-- Modales -->
-<app-appointment-form 
-  *ngIf="showAppointmentModal" 
-  [professional]="selectedProfessional"
-  (close)="closeAppointmentModal()"
-  (appointmentCreated)="onAppointmentCreated($event)">
-</app-appointment-form>
-
-<app-login-form
-  *ngIf="showLoginModal"
-  (close)="closeLoginModal()"
-  (loginSuccess)="onLoginSuccess($event)">
-</app-login-form>
-
-<app-register-form
-  *ngIf="showRegisterModal"
-  (close)="closeRegisterModal()"
-  (registerSuccess)="onRegisterSuccess($event)">
-</app-register-form>

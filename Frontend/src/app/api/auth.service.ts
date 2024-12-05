@@ -1,121 +1,92 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { isPlatformBrowser } from '@angular/common';
+import { map } from 'rxjs/operators';
 
-interface User {
+export interface User {
   id: string;
-  username: string;
+  name: string;
   email: string;
-}
-
-interface AuthResponse {
-  user: User;
-  token: string;
+  role: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-  private apiUrl = 'http://localhost:3000/api/auth';
-  private isBrowser: boolean;
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
+  public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-    if (this.isBrowser) {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        this.currentUserSubject.next(JSON.parse(storedUser));
-        this.isAuthenticatedSubject.next(true);
-      }
-    }
+  constructor() {
+    this.currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
+    this.currentUser = this.currentUserSubject.asObservable();
+    this.isAuthenticated$.next(!!this.currentUserValue);
   }
 
-  private setStorage(key: string, value: string): void {
-    if (this.isBrowser) {
-      localStorage.setItem(key, value);
-    }
+  private getUserFromStorage(): User | null {
+    const userStr = localStorage.getItem('currentUser');
+    return userStr ? JSON.parse(userStr) : null;
   }
 
-  private getStorage(key: string): string | null {
-    if (this.isBrowser) {
-      return localStorage.getItem(key);
-    }
-    return null;
-  }
-
-  private removeStorage(key: string): void {
-    if (this.isBrowser) {
-      localStorage.removeItem(key);
-    }
-  }
-
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
-      .pipe(
-        tap(response => {
-          if (response.user && response.token) {
-            this.setStorage('currentUser', JSON.stringify(response.user));
-            this.setStorage('token', response.token);
-            this.currentUserSubject.next(response.user);
-            this.isAuthenticatedSubject.next(true);
-          }
-        })
-      );
-  }
-
-  register(userData: { name: string, email: string, password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData)
-      .pipe(
-        tap(response => {
-          if (response.user && response.token) {
-            this.setStorage('currentUser', JSON.stringify(response.user));
-            this.setStorage('token', response.token);
-            this.currentUserSubject.next(response.user);
-            this.isAuthenticatedSubject.next(true);
-          }
-        })
-      );
-  }
-
-  logout(): Observable<void> {
-    return new Observable(observer => {
-      if (this.isBrowser) {
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('token');
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
-        observer.next();
-        observer.complete();
-      } else {
-        observer.error('Not running in browser');
-      }
-    });
-  }
-
-  getCurrentUser(): User | null {
+  public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
-  getToken(): string | null {
-    return this.getStorage('token');
+  async getCurrentUser(): Promise<User | null> {
+    return this.currentUserValue;
+  }
+
+  login(email: string, password: string): Observable<User> {
+    // Mock login for now
+    return new Observable<User>(observer => {
+      const mockUser: User = {
+        id: '1',
+        name: 'Test User',
+        email: email,
+        role: 'user'
+      };
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      this.currentUserSubject.next(mockUser);
+      this.isAuthenticated$.next(true);
+      observer.next(mockUser);
+      observer.complete();
+    });
+  }
+
+  register(userData: { name: string; email: string; password: string }): Observable<User> {
+    // Mock register for now
+    return new Observable<User>(observer => {
+      const mockUser: User = {
+        id: '1',
+        name: userData.name,
+        email: userData.email,
+        role: 'user'
+      };
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      this.currentUserSubject.next(mockUser);
+      this.isAuthenticated$.next(true);
+      observer.next(mockUser);
+      observer.complete();
+    });
+  }
+
+  logout(): Observable<void> {
+    return new Observable<void>(observer => {
+      localStorage.removeItem('currentUser');
+      this.currentUserSubject.next(null);
+      this.isAuthenticated$.next(false);
+      observer.next();
+      observer.complete();
+    });
   }
 
   isLoggedIn(): boolean {
-    return !!this.getCurrentUser();
+    return !!this.currentUserValue;
   }
 
   checkAuthStatus(): void {
-    const token = this.getStorage('token');
-    const user = this.getStorage('currentUser');
-    this.isAuthenticatedSubject.next(!!(token && user));
+    const user = this.getUserFromStorage();
+    this.currentUserSubject.next(user);
+    this.isAuthenticated$.next(!!user);
   }
 }

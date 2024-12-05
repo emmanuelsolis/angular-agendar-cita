@@ -1,0 +1,149 @@
+<div class="profile-container">
+  <!-- Información del usuario -->
+  <div class="user-info-section">
+    <div class="card">
+      <div class="card-body">
+        <h2>Mi Perfil</h2>
+        <div *ngIf="currentUser">
+          <p><strong>Nombre:</strong> {{ currentUser?.name }}</p>
+          <p><strong>Email:</strong> {{ currentUser?.email }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de citas -->
+  <div class="appointments-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Mis Citas</h3>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newAppointmentModal">
+        Nueva Cita
+      </button>
+    </div>
+
+    <!-- Lista de citas -->
+    <div class="appointments-list">
+      <div *ngFor="let appointment of appointments" class="appointment-card">
+        <!-- Vista normal -->
+        <ng-container *ngIf="editingAppointment?.id !== appointment.id">
+          <div class="appointment-header">
+            <h4>Cita con {{ professionals | professionalName:appointment.professionalId }}</h4>
+            <span class="badge" [ngClass]="{
+              'bg-warning': appointment.status === 'pending',
+              'bg-success': appointment.status === 'confirmed',
+              'bg-danger': appointment.status === 'cancelled'
+            }">{{ appointment.status }}</span>
+          </div>
+          <div class="appointment-details">
+            <p><strong>Fecha:</strong> {{ appointment.date | date:'shortDate' }}</p>
+            <p><strong>Hora:</strong> {{ appointment.startTime }} - {{ appointment.endTime }}</p>
+            <p *ngIf="appointment.notes"><strong>Notas:</strong> {{ appointment.notes }}</p>
+          </div>
+          <div class="appointment-actions">
+            <button class="btn btn-sm btn-primary me-2" (click)="startEditing(appointment)">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteAppointment(appointment.id!)">
+              Eliminar
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Vista de edición -->
+        <ng-container *ngIf="editingAppointment?.id === appointment.id">
+          <div class="appointment-edit-form">
+            <div class="form-group">
+              <label>Fecha:</label>
+              <input type="date" class="form-control"
+                     [ngModel]="editingAppointment.date | date:'yyyy-MM-dd'"
+                     (ngModelChange)="editingAppointment.date = $event">
+            </div>
+            <div class="form-group">
+              <label>Hora:</label>
+              <input type="time" class="form-control"
+                     [(ngModel)]="editingAppointment.startTime">
+            </div>
+            <div class="form-group">
+              <label>Notas:</label>
+              <textarea class="form-control"
+                     [(ngModel)]="editingAppointment.notes"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Estado:</label>
+              <select class="form-control"
+                     [(ngModel)]="editingAppointment.status">
+                <option value="pending">Pendiente</option>
+                <option value="confirmed">Confirmada</option>
+                <option value="cancelled">Cancelada</option>
+              </select>
+            </div>
+            <div class="edit-actions mt-3">
+              <button class="btn btn-success me-2"
+                     (click)="updateAppointment()">
+                Guardar
+              </button>
+              <button class="btn btn-secondary"
+                     (click)="cancelEditing()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva Cita -->
+<div class="modal fade" id="newAppointmentModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nueva Cita</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #appointmentForm="ngForm">
+          <div class="form-group mb-3">
+            <label>Profesional:</label>
+            <select class="form-control"
+                   [(ngModel)]="newAppointment.professionalId" 
+                   name="professionalId" required>
+              <option value="">Selecciona un profesional</option>
+              <option *ngFor="let prof of professionals" [value]="prof.id">
+                {{ prof.nombre }} - {{ prof.especialidad }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label>Fecha:</label>
+            <input type="date" class="form-control"
+                   [min]="(newAppointment.date | date:'yyyy-MM-dd')"
+                   [(ngModel)]="newAppointment.date" 
+                   name="date" required>
+          </div>
+          <div class="form-group mb-3">
+            <label>Hora:</label>
+            <input type="time" class="form-control"
+                   [(ngModel)]="newAppointment.startTime" 
+                   name="time" required>
+          </div>
+          <div class="form-group mb-3">
+            <label>Notas:</label>
+            <textarea class="form-control"
+                   [(ngModel)]="newAppointment.notes" 
+                   name="notes"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" 
+                [disabled]="!appointmentForm.form.valid"
+                (click)="createAppointment()">
+          Crear Cita
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

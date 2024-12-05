@@ -1,0 +1,47 @@
+{
+  "professionals": [
+    {
+      "id": "1",
+      "name": "Dr. Juan Pérez",
+      "specialty": "Cardiología",
+      "email": "juan.perez@hospital.com",
+      "phone": "555-0101"
+    },
+    {
+      "id": "2",
+      "name": "Dra. María García",
+      "specialty": "Pediatría",
+      "email": "maria.garcia@hospital.com",
+      "phone": "555-0102"
+    },
+    {
+      "id": "3",
+      "name": "Dr. Carlos Rodríguez",
+      "specialty": "Dermatología",
+      "email": "carlos.rodriguez@hospital.com",
+      "phone": "555-0103"
+    },
+    {
+      "id": "4",
+      "name": "Dra. Ana Martínez",
+      "specialty": "Neurología",
+      "email": "ana.martinez@hospital.com",
+      "phone": "555-0104"
+    },
+    {
+      "id": "5",
+      "name": "Dr. Luis Sánchez",
+      "specialty": "Traumatología",
+      "email": "luis.sanchez@hospital.com",
+      "phone": "555-0105"
+    }
+  ],
+  "appointments": [],
+  "users": [
+    {
+      "id": "1",
+      "name": "Usuario de Prueba",
+      "email": "usuario@test.com"
+    }
+  ]
+}
